@@ -1,5 +1,25 @@
 #include <bits/stdc++.h>
 
+/*
+* Time complexity: 
+* Best case: O(N), Worst case: O(N^2), Average case: O(N^2)
+*
+* Space Complexity:
+* O(1) for all cases.
+*/
+void bubble_sort(std::vector<int>& input) {
+    int n = input.size();
+    bool swapped = false;
+    do {
+        swapped = false;
+        for(int j = 0; j < n; j++) {
+            if(j + 1 < n && input[j] > input[j + 1]) {
+                std::swap(input[j], input[j + 1]);
+                swapped = true;
+            }
+        }
+    } while(swapped);
+}
 
 typedef void (*sorting_algo)(std::vector<int>& input);
 
