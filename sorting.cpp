@@ -21,6 +21,26 @@ void bubble_sort(std::vector<int>& input) {
     } while(swapped);
 }
 
+/* 
+* Time complexity: 
+* Best case: O(N), Worst case: O(N^2), Average case: O(N^2)
+*
+* Space Complexity:
+* O(1) for all cases.
+*/
+void insertion_sort(std::vector<int>& input) {
+    for(int i = 0; i < input.size(); i++) {
+        int current = input[i];
+        int j = i - 1;
+        while(j >= 0 && input[j] > current) {
+            input[j + 1] = input[j];
+            j--;
+        }
+        input[j + 1] = current;
+    }
+}
+
+
 typedef void (*sorting_algo)(std::vector<int>& input);
 
 void test_algorithm(sorting_algo function) {
@@ -77,5 +97,7 @@ void test_algorithm(sorting_algo function) {
 }
 
 int main(int argc, char** argv) {
+    test_algorithm(bubble_sort);    
+    test_algorithm(insertion_sort);
     return 0;
 }
