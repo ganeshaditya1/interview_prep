@@ -66,3 +66,75 @@ for nodeA in nodes
 **Time complexity** O(|V|^3)  
 **Space complexity** O(|E|) 
 
+#### 6.1 Minimum spanning tree Algorithms - Prim's Algorithm
+
+Minimum spanning tree algorithm concerns with picking a subset of edges in a graph, so that the overall connectivity of the graph doesn't change and also, if you add up all the edge weights, the sum you obtain is the minimum of all such subset of edges you can pick.
+
+
+Prim's algorithm is same as Dijkstra's algorithm. You maintain a frontier set of nodes and explore all the neighbors of these nodes. At each step you pick a node whose weight from a node in the frontier set is the lowest. To do this picking we can use a Priority queue. 
+
+
+**Time complexity** Same as Dijkstra's  
+**Space complexity** Same as Dijkstra's 
+
+#### 6.2 Minimum spanning tree Algorithms - Kruskal's Algorithm
+
+In Kruskal's algorithm, we sort all the edges in the graph. Then we pick one edge at a time, add that edge to the forest we have. If adding an edge causes a cycle, i.e. it connects two nodes that are already connected than we don't add that edge. Once we have added V - 1 edges to our forest, our forest would have essentially become a minimum spanning tree. For checking if two vertices are already connected we will use a Dijoint-set data structure. Also, Kruskal's algorithm can be parallelized unlike Prim's algorithm
+
+**Time complexity** O(ElogV) The cost of sorting edges = O(ElogE) = O(ElogV^2) = O(2ElogV) = O(ElogV) in case of a fully connected graph, which is the worst case. The cost of checking for cycles and adding a new edge into our graph is O(E*ack(V)). Where ack is the inverse ackerman function. O(ElogV + Eack(V)) = O(ElogV)  
+**Space complexity** O(|E| + |V|)
+
+#### 7.1 Topological sort - Kahn's algorithm
+
+A topological sorting of a graph is a way of visitng every node in the graph such that before visiting a node v we visit every node u, that has a directed node like incident on v like this: u -> v
+
+In Kahn's algorithm, we go over all the edges in the graph and calculate the indegree of every node. Then we add all nodes with an indegree of 0 into a queue. Then we keep popping elements off from the queue and each time we pop an element off of the queue we do two things. First, we add it to the result list and then we go through all of it's neighbors and decrease their indegree by 1. If any of these neighbors reach an indegree of 0, we add those to the queue as well. Once the queue is empty we stop.
+
+**Time complexity** O(|E| + |V|)  
+**Space complexity** O(|V|)
+
+#### 7.2 Topological sort - DFS algorithm
+
+Start from a node, do a DFS on the node. After visiting all the children of a node, right before returning add the current node to the head of the result list. 
+
+**Time complexity** Same as DFS  
+**Space complexity** Same as DFS
+
+#### 8. Disjoint-set Algorithm or Union-Find Algorithm
+
+This datastructure is a way to quickly check if two nodes belong to the same graph/tree/have the same parent. This datastructure has basically two operations. **Find** and **Union**. Find takes a node as input and returns it's parent. Union takes two nodes and merges them together such that they both have the same parent. Union under the hood uses Find calls to find the parents of the two nodes that need to be merged. Find call operates in a recursive way. i.e. if a node has a long chain of parents ex: a->b->c->d->e then find traverses this chain and finds the ultimate parent of the given node. find(a) in that example would return e. Also initially when a node is not merged into any other node, calling find on that node will return that node itself. I.e. intially each node is it's own parent.
+
+There are generally two famous optimizations made when implementing the DSU datastructure.
+1. **Path compression** when dealing with a long parent chain for example a->b->c->d->e each time we have to find the parent of a, we have to visit 5 different nodes. So an optimization we can do is to change a's parent to have it directly point to e whenever a find(a) call is made. We also do this for every node in the parent chain of a, so that all of these calls find(a), find(b), find(c), find(d), find(e) return e.
+2. When merging two parents, we make the parent with fewer nodes the child of the parent with more number of children nodes. This is because once a parent becomes a child of another parent all of it's node's parent chain increase by 1. So we rather have fewer node's parent chain changed than having a lot of node's parent chain changed.
+
+With these optimization in place, this is the time complexity of various operations of this datastructure.
+
+**Find**  
+**Time complexity** O(ack(N)) where ack is the reverse ackermann function or log*(n)
+
+**Union**  
+**Time complexity** O(ack(N))
+
+**Space complexity**
+O(N)
+
+### String algorithms
+
+#### 1. Trie datastructure
+
+Given a set of words, this datastructure makes it easy to see if a given word is a member of that set. Also given a prefix, this datastructure can be used to find all words in the original set that have this prefix.
+
+**Time complexity**  
+For creating a Trie it is O(N).   
+For checking if a prefix is member of the Trie it is O(N).  
+For inserting into a trie it is O(N)  
+For deleting a word it is O(N) as well.  
+**Space complexity** O(N)
+
+#### 2. KMP Algorithm
+
+KMP checks if a pattern occurs in a given string quickly. It does this by preprocessing the pattern and creating a table called LPS or Longest prefix suffix. It's a table that shows what is the longest suffix upto an index that is also the prefix. We use this table for doing the pattern matching on the input string. Basically when there is a mismatch between the pattern and the input string at a position, instead of going back to index 0 of the pattern, we use the prefix table or the failure table to back track to an earlier position of the pattern and attempt to match the input string from there.
+
+**Time complexity** O(N) for matching, where N is the length of the input string. O(M) for pre-processing the input pattern where M is the length of the pattern.  
+**Space complexity** O(M) for the LPS table. 
