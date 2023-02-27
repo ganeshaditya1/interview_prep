@@ -43,7 +43,7 @@ Djikstra's algorithm is used to find the shortest path from source node to all t
 
 Dijkstra's algorithm does a similar thing. It works excatly like BFS algorithm. But instead of using a regular queue, it uses a priority queue and picks a node that is the shortest distance from the source from the frontier. With Djikstra's algorithm we won't be in a situation where we have to re-explore a node again.
 
-**Time complexity** O((|V| + |E|)logV) This is similar to the time complexity of BFS. But in BFS we use a regular queue. Poping and pushing from a regular queue takes O(1) time. For priority queues, the cost of poping and pushing is O(N) where N is the number of items in the queue. In Dijkstra's algorithm, each vertice will go into the queue as many times as it has an edge. There are E edges. In the worst case when the graph is a fully connected graph, E = V(V - 1) = V^2. For each edge we do a push. Cost of these pushes is O(logE) = O(logV^2) = O(2logV) = O(logV). Hence the total cost is O((V + E)logV)  
+**Time complexity** O((|V| + |E|)logV) This is similar to the time complexity of BFS. But in BFS we use a regular queue. Poping and pushing from a regular queue takes O(1) time. For priority queues, the cost of poping and pushing is O(logN) where N is the number of items in the queue. In Dijkstra's algorithm, each vertice will go into the queue as many times as it has an edge. There are E edges. In the worst case when the graph is a fully connected graph, E = V(V - 1) = V^2. For each edge we do a push. Cost of these pushes is O(logE) = O(logV^2) = O(2logV) = O(logV). Hence the total cost is O((V + E)logV)  
 **Space complexity** O(V^2) The maximum number of items in the queue will be O(E) = O(V^2)  
 
 #### 4 Bellman-Ford Algorithm
