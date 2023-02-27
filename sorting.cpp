@@ -168,7 +168,11 @@ void merge_sort_wrapper(std::vector<int>& input) {
 * Space Complexity:
 * O(1) for all cases.
 *
-* Not Stable sort. In-place sort. 
+* Not Stable sort. In-place sort. Here I have implemented a sift up operation for heapify
+* But it is recommended to implement a sift down operation. These operations need to be 
+* performed for every single item in the heap. 
+*
+* Heapify is a O(N) algorithm. https://stackoverflow.com/a/18742428/2340452
 */
 void max_heapify(std::vector<int>& input) {
     // Do it top to bottom. 
