@@ -18,6 +18,8 @@ g++ --std=c++17 -g hashing.cpp -o hashing.out
 ```
 
 ## Complexities of some other well known algorithms
+![Graph of Asymptotic notations. Taken from USTC website.](http://staff.ustc.edu.cn/~csli/graduate/algorithms/book6/25_a.gif)
+[Big-oh vs small-oh](https://stackoverflow.com/a/1364491/2340452)
 ### Graph algorithms
 
 #### 1. BFS, Breadth first search
