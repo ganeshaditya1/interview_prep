@@ -17,8 +17,8 @@ void bubble_sort(std::vector<int>& input) {
     bool swapped = false;
     do {
         swapped = false;
-        for(int j = 0; j < n; j++) {
-            if(j + 1 < n && input[j] > input[j + 1]) {
+        for(int j = 0; j < n - 1; j++) {
+            if(input[j] > input[j + 1]) {
                 std::swap(input[j], input[j + 1]);
                 swapped = true;
             }
@@ -144,9 +144,7 @@ void quick_sort_wrapper(std::vector<int>& input) {
 * Merge sort on Linked lists doesn't require any additional memory.
 */
 void merge_sort(std::vector<int>& input, int left, int right, std::vector<int>& output) {
-    if(left > right || left < 0 || right >= input.size() || input.empty()) {
-        return;
-    } else if(left == right) {
+    if(left == right) {
         output[0] = input[left];
         return;
     }
@@ -175,6 +173,9 @@ void merge_sort(std::vector<int>& input, int left, int right, std::vector<int>& 
 
 
 void merge_sort_wrapper(std::vector<int>& input) {
+    if(input.empty()) {
+        return;
+    }
     std::vector<int> output(input.begin(), input.end());
     merge_sort(input, 0, input.size() - 1, output);
     input = output;
