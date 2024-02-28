@@ -405,31 +405,20 @@ void test_algorithm(sorting_algo function) {
 }
 
 int main(int argc, char** argv) {
-    std::cout << "Testing bubble sort" << std::endl;
-    test_algorithm(bubble_sort);
-
-    std::cout << "Testing insertion sort" << std::endl;
-    test_algorithm(insertion_sort);
-
-    std::cout << "Testing selection sort" << std::endl;
-    test_algorithm(selection_sort);
-
-    std::cout << "Testing quick sort" << std::endl;
-    test_algorithm(quick_sort_wrapper);
-
-    std::cout << "Testing merge sort" << std::endl;
-    test_algorithm(merge_sort_wrapper);
-
-    std::cout << "Testing heap sort" << std::endl;
-    test_algorithm(heap_sort);
-
-    std::cout << "Testing counting sort" << std::endl;
-    test_algorithm(counting_sort);
-
-    std::cout << "Testing Radix sort" << std::endl;
-    test_algorithm(radix_sort);
-
-    std::cout << "Testing bucket sort" << std::endl;
-    test_algorithm(bucket_sort_wrapper);
+    std::map<std::string, void (*)(std::vector<int>&)> sorting_functions = {
+        {"Bubble sort", bubble_sort},
+        {"Insertion sort", insertion_sort},
+        {"Selection sort", selection_sort},
+        {"Quick sort", quick_sort_wrapper},
+        {"Merge sort", merge_sort_wrapper},
+        {"Heap sort", heap_sort},
+        {"Counting sort", counting_sort},
+        {"Radix sort", radix_sort},
+        {"Bucket sort", bucket_sort_wrapper}
+    };
+    for(auto& sorting_function: sorting_functions) {
+        std::cout << "Testing " << sorting_function.first << std::endl;
+        test_algorithm(sorting_function.second);
+    }
     return 0;
 }
