@@ -1,7 +1,7 @@
 # Coding interview preparation
 ## Build & running instructions.
 
-I intentionally kept the build/running steps simple. I don't want to have to deal with cmake or make errors when I want to quickly revise something in this repo by reimplementing some of the code in this repo. It's also for this reason, I did not use ctest for the test cases.
+I intentionally kept the build/running steps simple. The primary focus of this repo is to help me quickly revise the fundamental algorithms. As a part of my interview preparation I am going to clone this repo and re-implement some of the algorithms or experiment with their implementation to make sure I understand the underlaying concepts thoroughly. I also want to be able to do this quickly. Because of this I felt that using cmake/meson/make/ctest would add unnecessary complexity. If I am troubleshooting my implementation that I don't want to be in a position where I have to guess if my changes are breaking because of the build system/ctest or if my changes are genuinely broken.
 
 The want the primary focus of this repository to be on highlight DS&A concepts. Not C++ best practises or build tricks.
 
@@ -26,13 +26,13 @@ Graph of Asymptotic notations. [Taken from USTC website.](http://staff.ustc.edu.
 ### Graph algorithms
 
 #### 1. BFS, Breadth first search
-Cover all the nodes neighboring the starting node, then fan out and cover their neighbors, then their neighbors and so on.
+Cover all the nodes neighboring of the starting node first, then fan out and cover their neighbors, then their neighbors and so on.
 
 **Time complexity** O(V + E) where V is the number of vertices, E is the number of edges. There could be cycles so the number of edges could be different from the number of vertices.  
 **Space complexity** O(E) BFS needs a queue to keep track of what nodes to visit next. It also needs a set/list to keep track of nodes we have already visited, so we don't get stuck in a loop re-visiting already visited nodes.
 
 #### 2. DFS, Depth first search
-Basically you start with a node and move on to it's child and then it's child and so on till you hit a node with no children or a node whose children have all been covered. Then you back track and explore an unvisited child.
+Basically you start with a node and move on to it's child and then it's child and so on till you hit a node with no children or a node whose children have all been covered. Then you back track and explore an unvisited child of the previous node.
 
 **Time complexity** Same as BFS  
 **Space complexity** Same as BFS
@@ -53,12 +53,23 @@ Bellman-ford detects cycles by going over all the edges V - 1 times
 
 As to why we need to run this V - 1 times? In each iteration we relax atleast 1 node. I.e. we find the shortest path from source to that node. The source node is already relaxed to begin with as the distance from source to source is 0. So that leaves us with V - 1 nodes that need to be relaxed. 
 
+Algorithm:
+```
+// Step 2: relax edges repeatedly
+    repeat |V|−1 times:
+        for each edge (u, v) with weight w in edges do
+            if distance[u] + w < distance[v] then
+                distance[v] := distance[u] + w
+                predecessor[v] := u
+```
+[Source for the above algorithm](https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm#Algorithm)
+
 **Time complexity** O(|V| * |E|)  
 **Space complexity** O(|V|) to store the distances of each node from source.
 
 #### 5 Floyd-Warshall Algorithm
 
-This thing computes the shortest paths from every node to every other node in a graph. It does this by iterating over two nodes at a time and then checking all the other nodes to see using those nodes as an intermediatary node shortens the path between the two nodes that we are currently considering.
+This algorithm computes the shortest paths from every node to every other node in a graph. It does this by iterating over two nodes at a time and then checking all the other nodes to see using those nodes as an intermediatary node shortens the path between the two nodes that we are currently considering.
 
 It's essentially this algorithm
 ```
@@ -86,12 +97,12 @@ Prim's algorithm is same as Dijkstra's algorithm. You maintain a frontier set of
 
 In Kruskal's algorithm, we sort all the edges in the graph. Then we pick one edge at a time, add that edge to the forest we have. If adding an edge causes a cycle, i.e. it connects two nodes that are already connected than we don't add that edge. Once we have added V - 1 edges to our forest, our forest would have essentially become a minimum spanning tree. For checking if two vertices are already connected we will use a Dijoint-set data structure. Also, Kruskal's algorithm can be parallelized unlike Prim's algorithm
 
-**Time complexity** O(ElogV) The cost of sorting edges = O(ElogE) = O(ElogV^2) = O(2ElogV) = O(ElogV) in case of a fully connected graph, which is the worst case. The cost of checking for cycles and adding a new edge into our graph is O(E*ack(V)). Where ack is the inverse ackerman function. O(ElogV + Eack(V)) = O(ElogV)  
+**Time complexity** O(ElogV) The cost of sorting edges = O(ElogE) = O(ElogV^2) = O(2ElogV) = O(ElogV) in case of a fully connected graph, which is the worst case. The cost of checking for cycles and adding a new edge into our graph is O(E\*ack(V)). Where ack is the inverse ackerman function. O(ElogV + E*ack(V)) = O(ElogV)  
 **Space complexity** O(|E| + |V|)
 
 #### 7.1 Topological sort - Kahn's algorithm
 
-A topological sorting of a graph is a way of visitng every node in the graph such that before visiting a node v we visit every node u, that has a directed node like incident on v like this: u -> v
+A topological sorting of a graph is a way of visiting every node in the graph such that before visiting a node v we visit every node u, that has a directed node like incident on v like this: u -> v
 
 In Kahn's algorithm, we go over all the edges in the graph and calculate the indegree of every node. Then we add all nodes with an indegree of 0 into a queue. Then we keep popping elements off from the queue and each time we pop an element off of the queue we do two things. First, we add it to the result list and then we go through all of it's neighbors and decrease their indegree by 1. If any of these neighbors reach an indegree of 0, we add those to the queue as well. Once the queue is empty we stop.
 
@@ -139,7 +150,41 @@ For deleting a word it is O(N) as well.
 
 #### 2. KMP Algorithm
 
-KMP checks if a pattern occurs in a given string quickly. It does this by preprocessing the pattern and creating a table called LPS or Longest prefix suffix. It's a table that shows what is the longest suffix upto an index that is also the prefix. We use this table for doing the pattern matching on the input string. Basically when there is a mismatch between the pattern and the input string at a position, instead of going back to index 0 of the pattern, we use the prefix table or the failure table to back track to an earlier position of the pattern and attempt to match the input string from there.
+```
+int strStr(string haystack, string needle) {
+        vector<int> lps(needle.length(), 0);
+        int len = 0, i = 1;
+        while(i < needle.length()) {
+            if(needle[i] == needle[len]) {
+                lps[i] = ++len;
+                i++;
+            } else if(len > 0) {
+                len = lps[len - 1];
+            } else {
+                i++;
+            }
+        }
+
+        i = 0;
+        int j = 0;
+        while(i < haystack.length()) {
+            if(haystack[i] == needle[j]) {
+                j++;
+                i++;
+                if(j == needle.length()) {
+                    return i - needle.length();
+                }
+            } else if(j > 0) {
+                j = lps[j - 1];
+            } else {
+                i++;
+            }
+        }
+        return -1;
+    }
+```
+
+KMP checks if a pattern occurs in a given string quickly. It does this by preprocessing the pattern and creating a table called LPS or Longest proper prefix suffix. It's a table that shows what is the longest suffix upto an index that is also a proper prefix. A proper prefix of a string is a substring of the original string that is not the same as the original string. It needs to be atleast 1 character shorter than the original string. We use this table for doing the pattern matching on the input string. Basically when there is a mismatch between the pattern and the input string at a position, instead of going back to index 0 of the pattern, we use the prefix table or the failure table to back track to an earlier position of the pattern and attempt to match the input string from there.
 
 **Time complexity** O(N) for matching, where N is the length of the input string. O(M) for pre-processing the input pattern where M is the length of the pattern.  
 **Space complexity** O(M) for the LPS table. 
