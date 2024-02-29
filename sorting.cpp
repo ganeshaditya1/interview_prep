@@ -476,7 +476,7 @@ void test_algorithm(sorting_algo function) {
 }
 
 int main(int argc, char** argv) {
-    std::vector<std::pair<std::string, void (*)(std::vector<int>&)>> sorting_functions = {
+    std::vector<std::pair<std::string, sorting_algo>> sorting_functions = {
         {"Bubble sort", bubble_sort},
         {"Insertion sort", insertion_sort},
         {"Selection sort", selection_sort},
