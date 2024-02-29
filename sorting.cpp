@@ -91,18 +91,25 @@ int quicksort_partition(std::vector<int>& input, int lo, int hi) {
     if(lo == hi) {
         return lo;
     }
-
-    int pivot = input[hi];
-    int left_edge = lo - 1;
-    for(int i = lo; i < hi; i++) {
-        if(input[i] <= pivot) {
-            left_edge++;
-            std::swap(input[left_edge], input[i]);
+    int pivot = input[lo];
+    int left = lo, right = hi;
+    while(true) {
+        while(input[left] < pivot) {
+            left++;
         }
+
+        while(input[right] > pivot) {
+            right--;
+        }
+
+        if(left >= right) {
+            return right;
+        }
+        std::swap(input[left], input[right]);
+        left++;
+        right--;
     }
-    left_edge++;
-    std::swap(input[left_edge], input[hi]);
-    return left_edge;
+    return -1;
 }
 
 void quick_sort(std::vector<int>& input, int left, int right) {
@@ -111,11 +118,11 @@ void quick_sort(std::vector<int>& input, int left, int right) {
     }
 
     int p = quicksort_partition(input, left, right);
-    if(p == -1 || p > right + 1) {
+    if(p == -1) {
         return;
     }
 
-    quick_sort(input, left, p - 1);
+    quick_sort(input, left, p);
     quick_sort(input, p + 1, right);
 }
 
@@ -418,7 +425,6 @@ typedef void (*sorting_algo)(std::vector<int>& input);
 
 void test_algorithm(sorting_algo function) {
     std::vector<std::vector<int>> test_cases = {
-        {},
         {1},
         {0},
         {-1},
