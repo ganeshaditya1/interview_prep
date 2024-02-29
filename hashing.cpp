@@ -211,7 +211,7 @@ void tester(hasher& hash_obj, bool open_addressing=false) {
     }
 
     for(int i = 20; i < 30; i++) {
-            hash_obj.set(i, i * i);
+        hash_obj.set(i, i * i);
     }
     if(open_addressing) {
         // All the hash functions have a size of 25, so this should fail.
@@ -261,21 +261,26 @@ void tester(hasher& hash_obj, bool open_addressing=false) {
 }
 
 int main(int argc, char** argv) {
-    std::cout << "Testing separate chaining." << std::endl;
+    // All the hash functions have a fixed size of 25;
+    const int size = 25;
     separate_chaining sc;
-    tester(sc);
+    linear_probing lp(size);
+    quadratic_probing qp(size);
+    double_hashing dh(size);
 
-    
-    std::cout << "Testing Linear probing." << std::endl;
-    linear_probing lp(25);
-    tester(lp, true);
+    // The bool indicates if this hashing object is open addressing scheme.
+    std::vector<std::tuple<std::string, hasher&, bool>> hasher_testcases = {
+        {"Separate chaining", sc, false},
+        {"Linear Probing", lp, true},
+        {"Quadratic probing", qp, true},
+        {"Double hashing", dh, true}
+    };
 
-    std::cout << "Testing Quadratic probing." << std::endl;
-    quadratic_probing qp(25);
-    tester(qp, true);
+    for(auto& hash_testcase: hasher_testcases) {
+        auto& [hasher_name, hashing_obj, open_addressing] = hash_testcase;
+        std::cout << "Testing " << hasher_name << std::endl;
+        tester(hashing_obj, open_addressing);
+    }
 
-    std::cout << "Testing Double hashing." << std::endl;
-    double_hashing dh(25);
-    tester(dh, true);
     return 0;
 }

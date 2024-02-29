@@ -1,6 +1,11 @@
 #include <bits/stdc++.h>
 
 /*
+* Going from left to right, compare two elements at a time.
+* Move the bigger element to the right.
+* Keep iterating over the array while doing this until no element 
+* has changed in the input array.
+*
 * Time complexity: 
 * Best case: O(N), Worst case: O(N^2), Average case: O(N^2)
 *
@@ -12,8 +17,8 @@ void bubble_sort(std::vector<int>& input) {
     bool swapped = false;
     do {
         swapped = false;
-        for(int j = 0; j < n; j++) {
-            if(j + 1 < n && input[j] > input[j + 1]) {
+        for(int j = 0; j < n - 1; j++) {
+            if(input[j] > input[j + 1]) {
                 std::swap(input[j], input[j + 1]);
                 swapped = true;
             }
@@ -22,6 +27,12 @@ void bubble_sort(std::vector<int>& input) {
 }
 
 /* 
+* At each step we will insert the given element into the currect spot on the left side.
+* For this find where the current element needs to be inserted to the
+* left of the current postion. Move all the elements on the right side 
+* of that position one step to the right.
+* Then insert the current element in that position.
+*
 * Time complexity: 
 * Best case: O(N), Worst case: O(N^2), Average case: O(N^2)
 *
@@ -40,7 +51,10 @@ void insertion_sort(std::vector<int>& input) {
     }
 }
 
-/* 
+/*
+* Select the smallest element to the right of the current position.
+* Swap that with the current element.
+*
 * Time complexity: 
 * Best case: O(N^2), Worst case: O(N^2), Average case: O(N^2)
 *
@@ -112,6 +126,16 @@ void quick_sort_wrapper(std::vector<int>& input) {
 
 
 /* 
+* 1. Keep subdividing the current array into two halfs. 
+* 2. Allocate memory the size of each half.
+* 3. Recursively call the merge_sort function on each half and also pass in the vector
+* that was allocated the size of each half.
+* 4. If the size of the input vector is 1, then just copy that one element into the output
+* space and return.
+*    Else subdivide the input vector into two halfs and again call the mergesort function on the 
+* two halves. 
+* 5. Once the call returns. Merge the two halves together.
+*
 * Time complexity: 
 * Best case: Omega(NlogN), Worst case: O(NlogN), Average case: Theta(NlogN)
 *
@@ -122,9 +146,7 @@ void quick_sort_wrapper(std::vector<int>& input) {
 * Merge sort on Linked lists doesn't require any additional memory.
 */
 void merge_sort(std::vector<int>& input, int left, int right, std::vector<int>& output) {
-    if(left > right || left < 0 || right >= input.size() || input.empty()) {
-        return;
-    } else if(left == right) {
+    if(left == right) {
         output[0] = input[left];
         return;
     }
@@ -153,12 +175,12 @@ void merge_sort(std::vector<int>& input, int left, int right, std::vector<int>& 
 
 
 void merge_sort_wrapper(std::vector<int>& input) {
+    if(input.empty()) {
+        return;
+    }
     std::vector<int> output(input.begin(), input.end());
     merge_sort(input, 0, input.size() - 1, output);
-
-    for(int i = 0; i < output.size(); i++) {
-        input[i] = output[i];
-    }
+    input = output;
 }
 
 /* 
@@ -220,7 +242,12 @@ void heap_sort(std::vector<int>& input) {
     }
 }
 
-/* 
+/*
+* In this algorithm count the occurences of each elements 
+* and walk over the counts in an ascending order and output
+* the element corresponding to the key in the output array while
+* decrementing the count.
+*
 * Time complexity: 
 * Best case: all O(N)
 *
@@ -244,7 +271,26 @@ void counting_sort(std::vector<int>& input) {
         counts[num - min_elem]++;
     }
 
-    // for stable sort
+    /*
+    * For making this stable sort, after taking counts, we will 
+    * walk over the input array from right to left. 
+    * Because of the counts array we already know how many times
+    * the given element we are currently looking at appears in the array.
+    * 
+    * We just need to know where to place the current element in the output array.
+    * 
+    * If 0 occurs 10 times and 1 occurs 5 times. Then assuming there are only 3 
+    * twos the first 2 occurs at the index position 15. The next 2 at 
+    * index position 16. And the final 2 occurs at 17. 
+    * 
+    * By adding the counts of 0 and 1 we get the location where the first 2 needs to be placed.
+    * If we add the count of 2 to that as well, we will get to the loction of the last 2.
+    * 
+    * Since we are iterating from right to left we just need to look at the count of 2 and write the
+    * 2 at that location and decrement the count. So the next time we see the 2 again we just use the
+    * counts again and write the 2 at that location and move on.
+    *
+    */
     for(int i = 1; i < counts.size(); i++) {
         counts[i] += counts[i - 1];
     }
@@ -261,6 +307,15 @@ void counting_sort(std::vector<int>& input) {
 }
 
 /* 
+* Sort all the numbers by the last digit of the number.
+* Then proceed to sort the array of the previous step using the last but one digit using a stable sort.
+* If the last but one digit is the same and we used a stable sort previously, then the elements 
+* will already be ordered by the last digit.
+* If the last but one digit is different then the bigger number will be placed after the smaller number.
+* Do this for the next digit and keep doing it till we run out of digits.
+* We use exp to keep track of what position within the number we are working on. We use counting sort
+* for this. The stable version of counting sort.
+*
 * Time complexity: 
 * Best case: all O(D*(N + B)) D => max number of digits. N=> Number of elements to sort. B => Base
 *
@@ -299,8 +354,11 @@ void radix_sort(std::vector<int>& input) {
     if(input.empty()) {
         return;
     }
-    int max_elem = *std::max_element(input.begin(), input.end());
-    int min_elem = *std::min_element(input.begin(), input.end());
+    int min_elem = input[0], max_elem = input[0];
+    for(auto num: input) {
+        min_elem = std::min(min_elem, num);
+        max_elem = std::max(max_elem, num);
+    }
     // Hack to make this work for arrays with negative elements.
     if(min_elem < 0) {
         sort(input.begin(), input.end());
@@ -316,7 +374,11 @@ void radix_sort(std::vector<int>& input) {
 }
 
 
-/* 
+/*
+* Divide the elements into a K buckets.
+* Sort the buckets individually
+* Walk the buckets and emit the elements.
+*
 * Time complexity: 
 * Depends on the underlaying sorting algorithm.
 *
@@ -330,10 +392,10 @@ void bucket_sort(std::vector<int>& input, int k) {
     
     int max_elem = *std::max_element(input.begin(), input.end());
     int min_elem = *std::min_element(input.begin(), input.end());
-    int denominator = max_elem - min_elem;
+    double denominator = max_elem - min_elem;
     denominator = denominator == 0 ? 1 : denominator;
     for(auto num: input) {
-        buckets[(((num - min_elem)/denominator)*k)].push_back(num);
+        buckets[(int)(((num - min_elem) / denominator) * k)].push_back(num);
     }
 
     int left_edge = 0;
@@ -378,6 +440,7 @@ void test_algorithm(sorting_algo function) {
         {1, 1, 1, -1, -1, -1}
     };
 
+    bool atleast_one_fail = false;
     for(auto& test_case: test_cases) {
         std::vector<int> test_case_copy(test_case.begin(), test_case.end());
         std::vector<int> sorted_output(test_case.begin(), test_case.end());
@@ -389,6 +452,7 @@ void test_algorithm(sorting_algo function) {
         for(int i = 0; i < test_case.size(); i++) {
             if(test_case[i] != sorted_output[i]) {
                 failed = true;
+                atleast_one_fail = true;
                 break;
             }
         }
@@ -406,10 +470,13 @@ void test_algorithm(sorting_algo function) {
             std::cout << std::endl << std::endl;
         }
     }
+    if(!atleast_one_fail) {
+        std::cout << "Pass." << std::endl << std::endl;
+    }
 }
 
 int main(int argc, char** argv) {
-    std::map<std::string, void (*)(std::vector<int>&)> sorting_functions = {
+    std::vector<std::pair<std::string, void (*)(std::vector<int>&)>> sorting_functions = {
         {"Bubble sort", bubble_sort},
         {"Insertion sort", insertion_sort},
         {"Selection sort", selection_sort},
