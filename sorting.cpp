@@ -3,8 +3,8 @@
 /*
 * Going from left to right, compare two elements at a time.
 * Move the bigger element to the right.
-* Kepe iterating over the array while doing this until no element 
-* was changed in the input array.
+* Keep iterating over the array while doing this until no element 
+* has changed in the input array.
 *
 * Time complexity: 
 * Best case: O(N), Worst case: O(N^2), Average case: O(N^2)
@@ -126,14 +126,16 @@ void quick_sort_wrapper(std::vector<int>& input) {
 
 
 /* 
-* Keep subdividing the current array into two halfs. 
-* Allocate memory the size of each half.
-* Recursively call the merge_sort function on each half and also pass in the vector
+* 1. Keep subdividing the current array into two halfs. 
+* 2. Allocate memory the size of each half.
+* 3. Recursively call the merge_sort function on each half and also pass in the vector
 * that was allocated the size of each half.
-* If the size of the input vector is 1, then just copy that one element into the output
+* 4. If the size of the input vector is 1, then just copy that one element into the output
 * space and return.
-* Else subdivide the input vector into two halfs and again call the mergesort function on the 
-* two halves. Once the call returns. Merge the two halves together.
+*    Else subdivide the input vector into two halfs and again call the mergesort function on the 
+* two halves. 
+* 5. Once the call returns. Merge the two halves together.
+*
 * Time complexity: 
 * Best case: Omega(NlogN), Worst case: O(NlogN), Average case: Theta(NlogN)
 *
@@ -277,7 +279,7 @@ void counting_sort(std::vector<int>& input) {
     * 
     * We just need to know where to place the current element in the output array.
     * 
-    * If o occurs 10 times and 1 occurs 5 times. Then assuming there are only 3 
+    * If 0 occurs 10 times and 1 occurs 5 times. Then assuming there are only 3 
     * twos the first 2 occurs at the index position 15. The next 2 at 
     * index position 16. And the final 2 occurs at 17. 
     * 
@@ -286,7 +288,7 @@ void counting_sort(std::vector<int>& input) {
     * 
     * Since we are iterating from right to left we just need to look at the count of 2 and write the
     * 2 at that location and decrement the count. So the next time we see the 2 again we just use the
-    * counts and write the 2 at that location and move on.
+    * counts again and write the 2 at that location and move on.
     *
     */
     for(int i = 1; i < counts.size(); i++) {
@@ -307,8 +309,8 @@ void counting_sort(std::vector<int>& input) {
 /* 
 * Sort all the numbers by the last digit of the number.
 * Then proceed to sort the array of the previous step using the last but one digit using a stable sort.
-* If the last but one digit is the same and we use a stable sort, the elements will be ordered by the last
-* digit since we are using a stable sort and the input is already sorted by the last digit.
+* If the last but one digit is the same and we used a stable sort previously, then the elements 
+* will already be ordered by the last digit.
 * If the last but one digit is different then the bigger number will be placed after the smaller number.
 * Do this for the next digit and keep doing it till we run out of digits.
 * We use exp to keep track of what position within the number we are working on. We use counting sort
