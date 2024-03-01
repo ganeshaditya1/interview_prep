@@ -101,10 +101,28 @@ int quicksort_partition(std::vector<int>& input, int lo, int hi) {
         while(input[right] > pivot) {
             right--;
         }
-
+        /*
+        * The sorting algorithm is done when the left index crosses right index.
+        * Not when one of the indices cross the pivot element. 
+        * 
+        * The pivot index is nothing special. It is only used to decide which one of the two
+        * halves each element ends up in. Other than that it serves no purpose at all.
+        */
         if(left >= right) {
             return right;
         }
+        /* This is how the array will look like after partitioning:
+        * 0 ------> left|right ----> N
+        * Not like this:
+        * 0 -----> left|pivot|right ----> N
+        * 
+        * The pivot element could be anywhere after partitioning. In the left or right half.
+        * But it will definitely belong to one of the halves. It won't be in the middle of the two halves.
+        * Because there is nothing in the middle. It's either left or right. And only vaccum in between.
+        * 
+        * The pivot element is not special at all. It can be swapped around multiple times before landing in it's final
+        * position. Don't think about the pivot element when writing this code.
+        */
         std::swap(input[left], input[right]);
         left++;
         right--;
