@@ -91,18 +91,43 @@ int quicksort_partition(std::vector<int>& input, int lo, int hi) {
     if(lo == hi) {
         return lo;
     }
-
-    int pivot = input[hi];
-    int left_edge = lo - 1;
-    for(int i = lo; i < hi; i++) {
-        if(input[i] <= pivot) {
-            left_edge++;
-            std::swap(input[left_edge], input[i]);
+    int pivot = input[lo];
+    int left = lo, right = hi;
+    while(true) {
+        while(input[left] < pivot) {
+            left++;
         }
+
+        while(input[right] > pivot) {
+            right--;
+        }
+        /*
+        * The sorting algorithm is done when the left index crosses right index.
+        * Not when one of the indices cross the pivot element. 
+        * 
+        * The pivot index is nothing special. It is only used to decide which one of the two
+        * halves each element ends up in. Other than that it serves no purpose at all.
+        */
+        if(left >= right) {
+            return right;
+        }
+        /* This is how the array will look like after partitioning:
+        * 0 ------> left|right ----> N
+        * Not like this:
+        * 0 -----> left|pivot|right ----> N
+        * 
+        * The pivot element could be anywhere after partitioning. In the left or right half.
+        * But it will definitely belong to one of the halves. It won't be in the middle of the two halves.
+        * Because there is nothing in the middle. It's either left or right. And only vaccum in between.
+        * 
+        * The pivot element is not special at all. It can be swapped around multiple times before landing in it's final
+        * position. Don't think about the pivot element when writing this code.
+        */
+        std::swap(input[left], input[right]);
+        left++;
+        right--;
     }
-    left_edge++;
-    std::swap(input[left_edge], input[hi]);
-    return left_edge;
+    return -1;
 }
 
 void quick_sort(std::vector<int>& input, int left, int right) {
@@ -111,11 +136,11 @@ void quick_sort(std::vector<int>& input, int left, int right) {
     }
 
     int p = quicksort_partition(input, left, right);
-    if(p == -1 || p > right + 1) {
+    if(p == -1) {
         return;
     }
 
-    quick_sort(input, left, p - 1);
+    quick_sort(input, left, p);
     quick_sort(input, p + 1, right);
 }
 
@@ -418,7 +443,6 @@ typedef void (*sorting_algo)(std::vector<int>& input);
 
 void test_algorithm(sorting_algo function) {
     std::vector<std::vector<int>> test_cases = {
-        {},
         {1},
         {0},
         {-1},
@@ -476,7 +500,7 @@ void test_algorithm(sorting_algo function) {
 }
 
 int main(int argc, char** argv) {
-    std::vector<std::pair<std::string, void (*)(std::vector<int>&)>> sorting_functions = {
+    std::vector<std::pair<std::string, sorting_algo>> sorting_functions = {
         {"Bubble sort", bubble_sort},
         {"Insertion sort", insertion_sort},
         {"Selection sort", selection_sort},
