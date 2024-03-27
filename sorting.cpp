@@ -78,6 +78,8 @@ void selection_sort(std::vector<int>& input) {
 /* 
 * Time complexity: 
 * Best case: O(NlogN), Worst case: O(N^2), Average case: O(NlogN)
+* Worst case complexity is because the partition could split the 
+* array into N-1 & 1 sized partition.
 *
 * Space Complexity:
 * O(1) for all cases.
